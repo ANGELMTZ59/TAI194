@@ -1,6 +1,5 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from typing import Optional # define para que los caracteres en las api sean opcionales o no
-
 app = FastAPI(
     title="Mi primera API",
     description="Angel Daniel Martinez Maqueda",
@@ -19,48 +18,26 @@ def main():
 
 
 
-#Endopoint: promedio
-@app.get("/promedio", tags=['Mi calificacion TAI'])
-def promedio():
-    return 10.5
+# Enpoint CONSULTA TODOS
+@app.get("/todosUsuarios/", tags=['Operaciones CRUD'])
+def leer():
+    return { 'Usarios Registrados: ': usuarios}
 
 
-#Endpoint con parametro obligatorio
-@app.get("/usuario/{id}", tags=['Endpoint parametro obligatorio'])
-def consultausuario(id: int):
-    return{"se encontro el usuario":{id}}
+#Endpoint de tipo POST
+@app.post("/usuarios/", tags=['Operaciones CRUD'])
+def guardar(usuario:dict):
+    for usr in usuarios:
+        if usr["id"]==usuario.get("id"):
+         raise HTTPException(status_code=400, detail="El usuario ya existe")
+    usuarios.append(usuario)
+    return usuario
 
-
-#Endpoint con parametro opcional
-@app.get("/usuario2/", tags=['Endpoint parametro opcional'])
-def consultausuario_opcional(id: Optional[int]=None):
-    if id is not None:
-        for usuario in usuarios: #usuario es la llave y usuarios es la lista
-            if usuario["id"] == id:
-                return {"mensaje": "usuario encontrado", "El usuario es: ": usuario}
-        return {"mensaje":f"No se encontro el id {id}"} #f es para concatenar
-    return{"mensaje": "No se proporciono un id"}
-
-
-
-#endpoint con varios parametro opcionales
-@app.get("/usuarios/", tags=["3 parámetros opcionales"])
-async def consulta_usuarios(
-    id: Optional[int] = None,
-    nombre: Optional[str] = None,
-    edad: Optional[int] = None
-):
-    resultados = []
-
-    for usuario in usuarios:
-        if (
-            (id is None or usuario["id"] == id) and
-            (nombre is None or usuario["nombre"].lower() == nombre.lower()) and
-            (edad is None or usuario["edad"] == edad)
-        ):
-            resultados.append(usuario)
-
-    if resultados:
-        return {"usuarios_encontrados": resultados}
-    else:
-        return {"mensaje": "No se encontraron usuarios que coincidan con los parámetros proporcionados."}
+#Endpoint para actualizar
+@app.put("/usuarios/{id}", tags=['Operaciones CRUD'])
+def actualizar(id:int, usuarioActualizado:dict):
+    for index, usr in enumerate(usuarios):
+        if usr["id"]==id:
+            usuarios[index].update(usuarioActualizado)
+            return usuarios[index]
+    raise HTTPException(status_code=400, detail="El usuario no existe")
