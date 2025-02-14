@@ -21,7 +21,7 @@ def main():
 # Enpoint CONSULTA TODOS
 @app.get("/todosUsuarios/", tags=['Operaciones CRUD'])
 def leer():
-    return { 'Usarios Registrados: ': usuarios}
+    return { 'Usuarios Registrados: ': usuarios}
 
 
 #Endpoint de tipo POST
@@ -41,3 +41,15 @@ def actualizar(id:int, usuarioActualizado:dict):
             usuarios[index].update(usuarioActualizado)
             return usuarios[index]
     raise HTTPException(status_code=400, detail="El usuario no existe")
+
+
+
+#Endpoint para eliminar
+@app.delete("/usuarios/{id}", tags=['Operaciones CRUD'])
+def eliminar(id:int):
+    for index, usr in enumerate(usuarios):
+        if usr["id"]==id:
+            usuarios.pop(index)
+            return { 'Usuarios Registrados: ': usuarios}
+    raise HTTPException(status_code=400, detail="El usuario no existe")
+
