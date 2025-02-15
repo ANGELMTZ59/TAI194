@@ -10,4 +10,16 @@ app = FastAPI(
 def main():
     return{"message": "!Bienvenido a FasAPI!"}
 
-
+tareas={
+    {"id":1, 
+     "titulo":"Estudiar para el examen",
+     "descripcion":"Repasar los apuntes de TAI",
+     "vencimiento":"14-02-25",
+     "estado":"completada"},
+     {"id":2,
+     "titulo":"Ir a trabajar jaja",
+     "descripcion":"Tengo que ir a trabajar mañana",
+     "vencimiento":"15-02-25",
+     "estado":"no completada",
+     }
+}
