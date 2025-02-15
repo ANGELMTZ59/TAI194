@@ -1,16 +1,12 @@
 from fastapi import FastAPI, HTTPException
-from typing import Optional # define para que los caracteres en las api sean opcionales o no
 app = FastAPI(
     title="Mi primera API",
     description="Angel Daniel Martinez Maqueda",
     version="1.0.1"
 )
 
-@app.get("/", tags=['Inicio'])
-def main():
-    return{"message": "!Bienvenido a FasAPI!"}
 
-tareas={
+tareas=[
     {"id":1, 
      "titulo":"Estudiar para el examen",
      "descripcion":"Repasar los apuntes de TAI",
@@ -22,4 +18,13 @@ tareas={
      "vencimiento":"15-02-25",
      "estado":"no completada",
      }
-}
+]
+@app.get("/", tags=['Inicio'])
+def main():
+    return{"message": "!Bienvenido a FasAPI!"}
+
+
+#endpoint para consultar todo
+@app.get("/tareas", tags=['Tareas'])
+def leer ():
+    return {"tareas regristradas en la lista: ": tareas}
