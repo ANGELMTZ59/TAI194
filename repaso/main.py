@@ -37,3 +37,14 @@ def buscar(tarea_id: int):
         if tarea["id"]==tarea_id:
             return tarea
     raise HTTPException(status_code=404, detail="Tarea no encontrada")
+
+
+
+#endpoint para agregar una tarea
+@app.post("/agregartarea/", tags=['Tareas'])
+def agregar(tarea: dict):
+    for usr in tareas:
+        if usr["id"]==tarea["id"]:
+            raise HTTPException(status_code=404, detail="Tarea ya existente")
+    tareas.append(tarea)
+    return tarea
