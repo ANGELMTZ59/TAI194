@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+
 app = FastAPI(
     title="Mi primera API",
     description="Angel Daniel Martinez Maqueda",
@@ -28,3 +29,11 @@ def main():
 @app.get("/tareas", tags=['Tareas'])
 def leer ():
     return {"tareas regristradas en la lista: ": tareas}
+
+#endpoint de tarea por id
+@app.get("/buscartarea", tags=['Tareas'])
+def buscar(tarea_id: int):
+    for tarea in tareas:
+        if tarea["id"]==tarea_id:
+            return tarea
+    raise HTTPException(status_code=404, detail="Tarea no encontrada")
