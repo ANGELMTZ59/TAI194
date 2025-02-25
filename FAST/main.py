@@ -1,17 +1,13 @@
 from fastapi import FastAPI, HTTPException
 from typing import Optional, List # define para que los caracteres en las api sean opcionales o no
 from pydantic import BaseModel
+from models import modelUsuario
 
 app = FastAPI(
     title="Mi primera API",
     description="Angel Daniel Martinez Maqueda",
     version="1.0.1"
 )
-class modelUsuario(BaseModel):
-    id: int
-    nombre: str
-    edad: int
-    correo: str
 
 usuarios=[
     {"id":1, "nombre":"Angel", "edad":20,"correo":"angelmaryinez1@gmail.com"},
@@ -60,4 +56,3 @@ def eliminar(id:int):
             usuarios.pop(index)
             return { 'Usuarios Registrados: ': usuarios}
     raise HTTPException(status_code=400, detail="El usuario no existe")
-
