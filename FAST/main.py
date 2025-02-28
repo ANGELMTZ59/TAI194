@@ -1,7 +1,8 @@
 from fastapi import FastAPI, HTTPException
 from typing import Optional, List # define para que los caracteres en las api sean opcionales o no
 from pydantic import BaseModel
-from models import modelUsuario
+from models import modelUsuario, modelAuth
+from genToken import createToken
 
 app = FastAPI(
     title="Mi primera API",
@@ -19,6 +20,23 @@ usuarios=[
 @app.get("/", tags=['Inicio'])
 def main():
     return{"message": "!Bienvenido a FasAPI!"}
+
+
+
+
+
+#Endpoint de tipo POST para tokens
+@app.post("/auth", tags=['Autentificacion'])
+def auth(credenciales:modelAuth):
+    if credenciales.mail == 'angel@gmail.com' and credenciales.passw == '12345678':
+        token: str = createToken(credenciales.model_dump())
+        print(token)
+        return {"Aviso:": "Token Generado"}
+    else:
+        return{"Aviso:": "Credenciales incorrectas"}
+
+
+
 
 
 
@@ -56,3 +74,5 @@ def eliminar(id:int):
             usuarios.pop(index)
             return { 'Usuarios Registrados: ': usuarios}
     raise HTTPException(status_code=400, detail="El usuario no existe")
+
+
