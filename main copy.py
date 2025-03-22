@@ -1,10 +1,12 @@
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.responses import JSONResponse
-from typing import Optional, List # define para que los caracteres en las api sean opcionales o no
-from pydantic import BaseModel
-from models import modelUsuario, modelAuth
+from typing import List
+from modelsPydantics import modelUsuario, modelAuth
 from genToken import createToken
+from DB.conexion import Session, engine, Base
+from models.modelsDB import User
 from middlewares import BearerJWT
+
 
 app = FastAPI(
     title="Mi primera API",
@@ -50,14 +52,21 @@ def leer(token: str = Depends(BearerJWT())):
 
 
 
-#Endpoint de tipo POST
-@app.post("/usuarios/", response_model= modelUsuario, tags=['Operaciones CRUD'])
-def guardar(usuario:modelUsuario):
-    for usr in usuarios:
-        if usr["id"]==usuario.id:
-         raise HTTPException(status_code=400, detail="El usuario ya existe")
-    usuarios.append(usuario.dict())
-    return usuario
+
+# Endpoint para registrar un nuevo usuario
+@app.post("/usuarios/", response_model=modelUsuario, tags=['Operaciones CRUD'])
+def guardar(usuario: modelUsuario):
+    db=Session()
+    try:
+        db.add(User(**usuario.model_dump()))
+        db.commit()
+        return JSONResponse(status_code=201, content={"message": "Usuario Guardado", "usuario": usuario.model_dump()})
+    except Exception as e:
+        db.rollback()
+        return JSONResponse(status_code=500, content={"message": "Error al guardar", "Error": str(e)})
+    finally:
+        db.close()
+
 
 #Endpoint para actualizar
 @app.put("/usuarios/{id}",response_model=modelUsuario, tags=['Operaciones CRUD'])
